@@ -1,0 +1,15 @@
+error[E0391]: cycle detected when looking up late bound vars inside `Bar`
+  --> $DIR/recursive-dyn-explicit-inherited-associated-type.rs:2:1
+   |
+LL | trait Bar: Foo<dyn Bar<Item = ()>> + Iterator<Item = ()> {}
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: ...which requires resolving lifetimes for `Bar`...
+   = note: ...which requires computing the super traits of `Bar` with associated type name `Item`...
+   = note: ...which again requires looking up late bound vars inside `Bar`, completing the cycle
+   = note: cycle used when computing the super clauses of `Bar`
+   = note: for more information, see <https://rustc-dev-guide.rust-lang.org/overview.html#queries> and <https://rustc-dev-guide.rust-lang.org/query.html>
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0391`.

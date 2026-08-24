@@ -1,0 +1,31 @@
+error: trait `Foo<Bar::{dyn#0}>` is more private than the item `Bar`
+  --> $DIR/recursive-dyn-diagnostics.rs:25:5
+   |
+LL |     pub trait Bar: Foo<dyn Bar> {}
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ trait `Bar` is reachable at visibility `pub(crate)`
+   |
+note: but trait `Foo<Bar::{dyn#0}>` is only usable at visibility `pub(self)`
+  --> $DIR/recursive-dyn-diagnostics.rs:23:5
+   |
+LL |     trait Foo<T: ?Sized> {}
+   |     ^^^^^^^^^^^^^^^^^^^^
+note: the lint level is defined here
+  --> $DIR/recursive-dyn-diagnostics.rs:21:13
+   |
+LL |     #![deny(private_bounds)]
+   |             ^^^^^^^^^^^^^^
+
+error: trait `Foo<(dyn Send + 'static)>` is more private than the item `Baz`
+  --> $DIR/recursive-dyn-diagnostics.rs:28:5
+   |
+LL |     pub trait Baz: Foo<dyn Send> {}
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ trait `Baz` is reachable at visibility `pub(crate)`
+   |
+note: but trait `Foo<(dyn Send + 'static)>` is only usable at visibility `pub(self)`
+  --> $DIR/recursive-dyn-diagnostics.rs:23:5
+   |
+LL |     trait Foo<T: ?Sized> {}
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+error: aborting due to 2 previous errors
+

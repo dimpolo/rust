@@ -1,0 +1,19 @@
+error[E0308]: mismatched types
+  --> $DIR/recursive-dyn-tracer-mismatch.rs:17:18
+   |
+LL |     object.trace(tracer);
+   |            ----- ^^^^^^ expected trait `MyTrait`, found trait `OtherTrait`
+   |            |
+   |            arguments to this method are incorrect
+   |
+   = note: expected fn pointer `for<'a> fn(&'a Rc<(dyn MyTrait + 'static)>)`
+              found fn pointer `for<'a> fn(&'a Rc<(dyn OtherTrait + 'static)>)`
+note: method defined here
+  --> $DIR/recursive-dyn-tracer-mismatch.rs:10:8
+   |
+LL |     fn trace(&self, tracer: fn(&Rc<Dyn>));
+   |        ^^^^^        ------
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0308`.

@@ -1,0 +1,13 @@
+error[E0391]: cycle detected when computing the super clauses of `Bar`
+  --> $DIR/recursive-dyn-fn-input.rs:2:1
+   |
+LL | trait Bar: Foo<fn(&dyn Bar)> {}
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: ...which immediately requires computing the super clauses of `Bar` again
+   = note: cycle used when checking that `Bar` is well-formed
+   = note: for more information, see <https://rustc-dev-guide.rust-lang.org/overview.html#queries> and <https://rustc-dev-guide.rust-lang.org/query.html>
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0391`.

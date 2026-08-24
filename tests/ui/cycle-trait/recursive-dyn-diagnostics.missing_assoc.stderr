@@ -1,0 +1,31 @@
+error[E0191]: the value of the associated type `Out` in `Foo<Bar::{dyn#0}>` must be specified
+  --> $DIR/recursive-dyn-diagnostics.rs:11:24
+   |
+LL |         type Out;
+   |         -------- `Out` defined here
+...
+LL |     trait Bar: Foo<dyn Bar> {}
+   |                        ^^^
+   |
+help: specify the associated type
+   |
+LL |     trait Bar: Foo<dyn Bar<Out = /* Type */>> {}
+   |                           ++++++++++++++++++
+
+error[E0191]: the value of the associated type `Out` in `Foo<(dyn Send + 'static)>` must be specified
+  --> $DIR/recursive-dyn-diagnostics.rs:15:18
+   |
+LL |         type Out;
+   |         -------- `Out` defined here
+...
+LL |     fn f(_: &dyn Baz) {}
+   |                  ^^^
+   |
+help: specify the associated type
+   |
+LL |     fn f(_: &dyn Baz<Out = /* Type */>) {}
+   |                     ++++++++++++++++++
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0191`.
