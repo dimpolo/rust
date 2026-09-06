@@ -242,6 +242,7 @@ pub enum DefPathData {
     /// An anonymous associated type from an RPITIT. The symbol refers to the name of the method
     /// that defined the type.
     AnonAssocTy(Symbol),
+    AnonDynTy,
     /// A synthetic body for a coroutine's by-move body.
     SyntheticCoroutineBody,
     /// Additional static data referred to by a static.
@@ -447,6 +448,7 @@ impl DefPathData {
             | AnonConst
             | OpaqueTy
             | AnonAssocTy(..)
+            | AnonDynTy
             | SyntheticCoroutineBody
             | NestedStatic
             | TestBinderConstraints => None,
@@ -470,7 +472,8 @@ impl DefPathData {
             | OpaqueTy
             | SyntheticCoroutineBody
             | NestedStatic
-            | TestBinderConstraints => None,
+            | TestBinderConstraints
+            | AnonDynTy => None,
         }
     }
 
@@ -490,6 +493,7 @@ impl DefPathData {
             AnonConst => DefPathDataName::Anon { namespace: sym::constant },
             OpaqueTy => DefPathDataName::Anon { namespace: sym::opaque },
             AnonAssocTy(..) => DefPathDataName::Anon { namespace: sym::anon_assoc },
+            AnonDynTy => DefPathDataName::Anon { namespace: kw::Dyn },
             SyntheticCoroutineBody => DefPathDataName::Anon { namespace: sym::synthetic },
             NestedStatic => DefPathDataName::Anon { namespace: sym::nested },
             TestBinderConstraints => {

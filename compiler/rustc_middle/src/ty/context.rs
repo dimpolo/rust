@@ -1383,6 +1383,10 @@ impl<'tcx> TyCtxt<'tcx> {
         }
     }
 
+    pub fn is_dyn_trait_alias(self, def_id: DefId) -> bool {
+        self.def_key(def_id).disambiguated_data.data == DefPathData::AnonDynTy
+    }
+
     pub fn definitions(self) -> &'tcx rustc_hir::definitions::Definitions {
         // Depend on the `analysis` query to ensure compilation if finished.
         self.ensure_ok().analysis(());

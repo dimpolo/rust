@@ -52,6 +52,7 @@ use crate::diagnostics::{self, ElidedLifetimesAreNotAllowedInDelegations};
 use crate::hir_ty_lowering::{HirTyLowerer, InherentAssocCandidate, RegionInferReason};
 
 mod clauses_of;
+mod dyn_trait;
 pub(crate) mod dump;
 mod generics_of;
 mod item_bounds;
@@ -68,6 +69,7 @@ pub(crate) fn provide(providers: &mut Providers) {
         type_of_opaque: type_of::type_of_opaque,
         type_of_opaque_hir_typeck: type_of::type_of_opaque_hir_typeck,
         type_alias_is_checked: type_of::type_alias_is_checked,
+        dyn_trait_aliases: dyn_trait::dyn_trait_aliases,
         item_bounds: item_bounds::item_bounds,
         explicit_item_bounds: item_bounds::explicit_item_bounds,
         item_self_bounds: item_bounds::item_self_bounds,

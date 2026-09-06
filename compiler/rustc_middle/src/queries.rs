@@ -379,6 +379,10 @@ rustc_queries! {
         separate_provide_extern
     }
 
+    query dyn_trait_aliases(key: LocalDefId) -> &'tcx [(hir::HirId, LocalDefId)] {
+        desc { "collecting deferred trait objects in `{}`", tcx.def_path_str(key) }
+    }
+
     query collect_return_position_impl_trait_in_trait_tys(key: DefId)
         -> Result<&'tcx DefIdMap<ty::EarlyBinder<'tcx, Ty<'tcx>>>, ErrorGuaranteed>
     {

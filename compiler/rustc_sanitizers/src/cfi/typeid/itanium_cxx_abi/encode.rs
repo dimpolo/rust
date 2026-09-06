@@ -811,6 +811,7 @@ fn encode_ty_name(tcx: TyCtxt<'_>, def_id: DefId) -> String {
             | hir::definitions::DefPathData::OpaqueLifetime(..)
             | hir::definitions::DefPathData::LifetimeNs(..)
             | hir::definitions::DefPathData::AnonAssocTy(..)
+            | hir::definitions::DefPathData::AnonDynTy
             | hir::definitions::DefPathData::TestBinderConstraints => {
                 bug!("encode_ty_name: unexpected `{:?}`", disambiguated_data.data);
             }

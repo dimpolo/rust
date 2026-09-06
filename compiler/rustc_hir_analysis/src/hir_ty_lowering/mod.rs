@@ -143,6 +143,10 @@ pub trait HirTyLowerer<'tcx> {
     /// Returns the [`LocalDefId`] of the overarching item whose constituents get lowered.
     fn item_def_id(&self) -> LocalDefId;
 
+    fn deferred_trait_object(&self, _hir_id: HirId) -> Option<Ty<'tcx>> {
+        None
+    }
+
     /// Returns the region to use when a lifetime is omitted (and not elided).
     fn re_infer(&self, span: Span, reason: RegionInferReason<'_>) -> ty::Region<'tcx>;
 

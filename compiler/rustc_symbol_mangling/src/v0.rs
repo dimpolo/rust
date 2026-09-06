@@ -973,6 +973,7 @@ impl<'tcx> Printer<'tcx> for V0SymbolMangler<'tcx> {
             | DefPathData::LifetimeNs(_)
             | DefPathData::OpaqueLifetime(_)
             | DefPathData::AnonAssocTy(..)
+            | DefPathData::AnonDynTy
             | DefPathData::TestBinderConstraints => {
                 bug!("symbol_names: unexpected DefPathData: {:?}", disambiguated_data.data)
             }
