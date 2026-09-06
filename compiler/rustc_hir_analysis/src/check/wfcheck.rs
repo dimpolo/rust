@@ -232,6 +232,12 @@ pub(super) fn check_well_formed(
 ) -> Result<(), ErrorGuaranteed> {
     let mut res = crate::check::check::check_item_type(tcx, def_id);
 
+    if tcx.def_kind(def_id) == DefKind::Trait {
+        for &(_, alias) in tcx.dyn_trait_aliases(def_id) {
+            res = res.and(tcx.check_well_formed(alias));
+        }
+    }
+
     for param in &tcx.generics_of(def_id).own_params {
         res = res.and(check_param_wf(tcx, param));
     }

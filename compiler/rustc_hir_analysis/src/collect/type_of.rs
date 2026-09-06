@@ -23,6 +23,20 @@ pub(super) fn type_of(tcx: TyCtxt<'_>, def_id: LocalDefId) -> ty::EarlyBinder<'_
     use rustc_hir::*;
     use rustc_middle::ty::Ty;
 
+    if tcx.is_dyn_trait_alias(def_id.to_def_id()) {
+        let &(hir_id, _) = tcx
+            .dyn_trait_aliases(tcx.local_parent(def_id))
+            .iter()
+            .find(|&&(_, alias)| alias == def_id)
+            .unwrap();
+        let hir::Node::Ty(hir_ty) = tcx.hir_node(hir_id) else {
+            bug!("deferred trait object is not a type");
+        };
+        let ty = ItemCtxt::new(tcx, def_id).lower_ty(hir_ty);
+        assert!(!ty.has_param() && !ty.has_escaping_bound_vars());
+        return ty::EarlyBinder::bind(tcx, ty);
+    }
+
     // If we are computing `type_of` the synthesized associated type for an RPITIT in the impl
     // side, use `collect_return_position_impl_trait_in_trait_tys` to infer the value of the
     // associated type in the impl.
@@ -565,7 +579,7 @@ fn check_feature_inherent_assoc_ty(tcx: TyCtxt<'_>, span: Span) {
 
 pub(crate) fn type_alias_is_checked<'tcx>(tcx: TyCtxt<'tcx>, def_id: LocalDefId) -> bool {
     use hir::intravisit::Visitor;
-    if tcx.features().checked_type_aliases() {
+    if tcx.is_dyn_trait_alias(def_id.to_def_id()) || tcx.features().checked_type_aliases() {
         return true;
     }
     struct HasTait;

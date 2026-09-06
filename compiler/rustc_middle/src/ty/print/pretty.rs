@@ -3190,6 +3190,9 @@ define_print! {
             | ty::AliasTermKind::AnonConst { def_id }
             | ty::AliasTermKind::ProjectionConst { def_id }
             | ty::AliasTermKind::InherentConstImpl { def_id } => {
+                // FIXME: Synthetic dyn aliases leak paths like `Bar::{dyn#0}` into E0191 and
+                // `private_bounds` diagnostics when printing unnormalized supertrait clauses.
+                // Print their underlying dyn types without re-entering active lowering queries.
                 p.print_def_path(def_id, self.args)?;
             }
         }

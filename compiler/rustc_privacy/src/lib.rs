@@ -182,6 +182,14 @@ where
         // in `super_visit_with`.
         let ty_kind = *ty.kind();
         match ty_kind {
+            ty::Alias(_, ty::AliasTy { kind: ty::Free { def_id }, args, .. })
+                if tcx.is_dyn_trait_alias(def_id) =>
+            {
+                if !self.visited_tys.insert(ty) {
+                    return V::Result::output();
+                }
+                return tcx.type_of(def_id).instantiate(tcx, args).skip_norm_wip().visit_with(self);
+            }
             ty::Adt(ty::AdtDef(Interned(&ty::AdtDefData { did: def_id, .. }, _)), ..)
             | ty::Foreign(def_id)
             | ty::FnDef(def_id, ..)

@@ -21,7 +21,16 @@ pub(super) fn diagnostic_hir_wf_check<'tcx>(
         WellFormedLoc::Ty(def_id) => def_id,
         WellFormedLoc::Param { function, param_idx: _ } => function,
     };
-    let hir_id = tcx.local_def_id_to_hir_id(def_id);
+    let hir_id = if tcx.is_dyn_trait_alias(def_id.to_def_id()) {
+        let parent = tcx.local_parent(def_id);
+        tcx.dyn_trait_aliases(parent)
+            .iter()
+            .find(|&&(_, alias)| alias == def_id)
+            .map(|&(hir_id, _)| hir_id)
+            .unwrap()
+    } else {
+        tcx.local_def_id_to_hir_id(def_id)
+    };
 
     // HIR wfcheck should only ever happen as part of improving an existing error
     tcx.dcx()
@@ -132,6 +141,7 @@ pub(super) fn diagnostic_hir_wf_check<'tcx>(
     // a more precise span for our predicate.
     let tys = match loc {
         WellFormedLoc::Ty(_) => match tcx.hir_node(hir_id) {
+            hir::Node::Ty(ty) => vec![ty],
             hir::Node::ImplItem(item) => match item.kind {
                 hir::ImplItemKind::Type(ty) => vec![ty],
                 hir::ImplItemKind::Const(ty, _) => vec![ty],

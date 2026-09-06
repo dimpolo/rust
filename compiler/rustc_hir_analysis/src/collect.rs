@@ -52,8 +52,8 @@ use crate::diagnostics::{self, ElidedLifetimesAreNotAllowedInDelegations};
 use crate::hir_ty_lowering::{HirTyLowerer, InherentAssocCandidate, RegionInferReason};
 
 mod clauses_of;
-mod dyn_trait;
 pub(crate) mod dump;
+mod dyn_trait;
 mod generics_of;
 mod item_bounds;
 mod resolve_bound_vars;
@@ -498,6 +498,23 @@ impl<'tcx> HirTyLowerer<'tcx> for ItemCtxt<'tcx> {
 
     fn item_def_id(&self) -> LocalDefId {
         self.item_def_id
+    }
+
+    fn deferred_trait_object(&self, hir_id: HirId) -> Option<Ty<'tcx>> {
+        if self.tcx.def_kind(self.item_def_id) != DefKind::Trait {
+            return None;
+        }
+        let &(_, def_id) =
+            self.tcx.dyn_trait_aliases(self.item_def_id).iter().find(|&&(id, _)| id == hir_id)?;
+        Some(Ty::new_alias(
+            self.tcx,
+            ty::IsRigid::No,
+            ty::AliasTy::new_from_args(
+                self.tcx,
+                ty::Free { def_id: def_id.to_def_id() },
+                ty::GenericArgs::empty(),
+            ),
+        ))
     }
 
     fn re_infer(&self, span: Span, reason: RegionInferReason<'_>) -> ty::Region<'tcx> {

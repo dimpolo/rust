@@ -41,6 +41,9 @@ impl<'tcx> dyn HirTyLowerer<'tcx> + '_ {
         lifetime: &hir::Lifetime,
         syntax: TraitObjectSyntax,
     ) -> Ty<'tcx> {
+        if let Some(ty) = self.deferred_trait_object(hir_id) {
+            return ty;
+        }
         let tcx = self.tcx();
         let dummy_self = tcx.types.trait_object_dummy_self;
 
